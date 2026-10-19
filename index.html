@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f4e9">
+  <title>Sugar Rush | A little match-3 magic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="wordmark" href="#" aria-label="Sugar Rush home"><span class="wordmark-mark">✳</span> sugar<span>rush</span></a>
+      <div class="top-actions">
+        <button class="icon-button" id="themeButton" type="button" aria-label="Switch color theme" title="Switch color theme"><span aria-hidden="true">◐</span></button>
+        <button class="icon-button" id="soundButton" type="button" aria-label="Turn sound on" title="Sound"><span aria-hidden="true">♫</span></button>
+        <button class="icon-button" id="musicButton" type="button" aria-label="Turn music on" title="Music"><span aria-hidden="true">♪</span></button>
+        <button class="icon-button" id="pauseButton" type="button" aria-label="Pause game" title="Pause"><span aria-hidden="true">Ⅱ</span></button>
+      </div>
+    </header>
+
+    <section class="game-layout" aria-label="Sugar Rush match-three game">
+      <aside class="side-panel">
+        <div class="level-heading"><span class="eyebrow">SWEET ADVENTURE</span><div class="level-name">Level <span id="levelNumber">1</span><span class="level-star">✦</span></div></div>
+        <div class="progress-track" aria-label="Level progress"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label"><span id="progressCurrent">0</span><span id="progressTarget">1,000</span></div>
+
+        <div class="score-card"><div class="card-label">YOUR SCORE</div><div class="score-value" id="scoreValue">0</div><div class="best-line"><span>PERSONAL BEST</span><strong id="highScoreValue">0</strong></div></div>
+
+        <div class="moves-card"><div><span class="card-label">MOVES LEFT</span><div class="moves-number" id="movesValue">25</div></div><div class="moves-icon" aria-hidden="true">↗</div></div>
+
+        <div class="mission"><div class="mission-icon" aria-hidden="true">◎</div><div><span class="card-label">LEVEL GOAL</span><strong>Score <span id="goalValue">1,000</span> points</strong></div></div>
+
+        <button class="restart-button" id="restartButton" type="button"><span aria-hidden="true">⟳</span> Start over</button>
+        <p class="side-note">Match 3 or more treats.<br>Big matches make special candy!</p>
+      </aside>
+
+      <section class="board-column">
+        <div class="board-topline"><div><span class="eyebrow">THE CANDY GARDEN</span><h1>Make a little <em>magic.</em></h1></div><div class="combo-badge" id="comboBadge" aria-live="polite">READY?</div></div>
+        <div class="board-frame"><div class="board" id="board" role="grid" aria-label="Candy board"></div><div class="board-flash" id="boardFlash" aria-hidden="true"></div></div>
+        <div class="board-footer"><span><i class="legend-dot dot-mint"></i> 4 match makes a stripe</span><span><i class="legend-dot dot-peach"></i> 5 match makes a color bomb</span></div>
+      </section>
+    </section>
+    <footer class="page-footer"><span>TAKE A BREATH. TAKE A TURN.</span><span>MADE OF SUGAR & SUNSHINE <b>✳</b></span></footer>
+  </main>
+
+  <div class="modal is-hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card"><div class="modal-sparkle" id="modalIcon">✦</div><p class="eyebrow" id="modalKicker">SWEET!</p><h2 id="modalTitle">Lovely work.</h2><p class="modal-copy" id="modalCopy">Your next little adventure is ready.</p><button class="modal-button" id="modalButton" type="button">Keep playing <span aria-hidden="true">→</span></button></div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
