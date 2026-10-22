@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5ef">
+  <meta name="description" content="AgriTrac customer support for parts, service, manuals and warranty questions.">
+  <title>AgriTrac Support | Here for every season</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header" id="home">
+    <div class="header-inner">
+      <a class="brand" href="#home" aria-label="AgriTrac Support home"><span class="brand-mark" aria-hidden="true">A<i></i></span><span class="brand-name">Agri<span>Trac</span><small>OWNER SUPPORT</small></span></a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Open navigation menu"><span></span><span></span></button>
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation"><a href="#support">Support topics</a><a href="#guides">Guides & FAQs</a><a href="#track">Track a request</a></nav>
+      <a class="header-cta" href="#request">Contact support <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span> AGRITRAC CUSTOMER CARE</p>
+          <h1 id="heroTitle">Good work in the field starts with <em>good support.</em></h1>
+          <p class="hero-description">Find parts, get service guidance, or talk to someone who understands your machine.</p>
+          <form class="help-search" id="helpSearch" role="search"><label class="sr-only" for="helpQuery">Search support topics</label><span class="search-icon" aria-hidden="true">⌕</span><input id="helpQuery" type="search" placeholder="Search parts, service, manuals..." autocomplete="off"><button type="submit">Search <span aria-hidden="true">→</span></button></form>
+          <p class="search-hint" id="searchFeedback" aria-live="polite">Popular: <button type="button" data-search="oil filter">Oil filter</button><button type="button" data-search="manual">Operator manual</button><button type="button" data-search="warranty">Warranty</button></p>
+          <div class="hero-actions"><a class="primary-link" href="#support">Explore support <span aria-hidden="true">↓</span></a><a class="text-link" href="#request">Request help <span aria-hidden="true">↗</span></a></div>
+        </div>
+        <div class="hero-visual"><img src="/assets/tractor-field.jpg" alt="A green tractor working in a farm field" fetchpriority="high"><div class="image-caption"><span class="caption-mark" aria-hidden="true">A</span><span>READY FOR THE WORK AHEAD<small>Support built around your season</small></span></div></div>
+      </div>
+      <div class="hero-bottomline"><span>BUILT FOR THE LAND. HERE FOR THE PEOPLE WHO WORK IT.</span><span>SUPPORT THAT KEEPS YOU MOVING <b aria-hidden="true">✳</b></span></div>
+    </section>
+
+    <section class="support-section section-wrap" id="support" aria-labelledby="supportTitle">
+      <div class="section-heading"><div><p class="eyebrow">HOW CAN WE HELP?</p><h2 id="supportTitle">Find the right kind of support.</h2></div><p class="section-intro">From a quick manual lookup to help getting back in the field, start here.</p></div>
+      <div class="support-grid" id="supportGrid">
+        <button class="support-card" type="button" data-topic="Parts & filters" data-terms="parts spare parts filter oil filter air filter battery belt catalog"><span class="topic-icon">＋</span><span class="topic-number">01 / PARTS</span><strong>Parts & filters</strong><span class="topic-copy">Find the right part for your model.</span><span class="topic-arrow">↗</span></button>
+        <button class="support-card" type="button" data-topic="Service & maintenance" data-terms="service maintenance repair schedule technician dealer breakdown engine seasonal"><span class="topic-icon icon-service">⌁</span><span class="topic-number">02 / SERVICE</span><strong>Service & maintenance</strong><span class="topic-copy">Plan maintenance or get repair help.</span><span class="topic-arrow">↗</span></button>
+        <button class="support-card" type="button" data-topic="Manuals & guides" data-terms="manual operator guide instructions safety controls setup"><span class="topic-icon icon-manual">▤</span><span class="topic-number">03 / GUIDES</span><strong>Manuals & guides</strong><span class="topic-copy">Get familiar with every feature.</span><span class="topic-arrow">↗</span></button>
+        <button class="support-card" type="button" data-topic="Warranty & coverage" data-terms="warranty coverage claim protection registration serial number"><span class="topic-icon icon-warranty">◇</span><span class="topic-number">04 / WARRANTY</span><strong>Warranty & coverage</strong><span class="topic-copy">Understand coverage and next steps.</span><span class="topic-arrow">↗</span></button>
+        <button class="support-card" type="button" data-topic="Machine troubleshooting" data-terms="troubleshooting warning light starting battery engine hydraulics diagnostics"><span class="topic-icon icon-trouble">⌕</span><span class="topic-number">05 / TROUBLESHOOT</span><strong>Machine troubleshooting</strong><span class="topic-copy">Work through common machine issues.</span><span class="topic-arrow">↗</span></button>
+        <button class="support-card support-card-accent" type="button" data-topic="Other question" data-terms="contact people support callback team question"><span class="topic-icon icon-contact">↗</span><span class="topic-number">06 / PEOPLE</span><strong>Talk to our team</strong><span class="topic-copy">Tell us what is going on. We will help.</span><span class="topic-arrow">↗</span></button>
+      </div>
+      <p class="empty-search" id="emptySearch" hidden>No support topics match that search. <button type="button" id="clearSearch">Show all topics</button>.</p>
+    </section>
+
+    <section class="machine-band"><div class="machine-inner section-wrap"><div class="machine-copy"><p class="eyebrow">A BETTER ANSWER STARTS WITH YOUR MODEL</p><h2>Let’s get to know your machine.</h2><p>Have your model or serial number handy when you request support. It helps your dealer find the right information faster.</p><a href="#request" class="text-link">Add it to a support request <span>↗</span></a></div><div class="machine-illustration" aria-hidden="true"><span class="sun-disc"></span><span class="field-line field-one"></span><span class="field-line field-two"></span><span class="tractor-art"><i class="tractor-cab"></i><i class="tractor-hood"></i><i class="tractor-exhaust"></i><i class="tractor-wheel wheel-large"></i><i class="tractor-wheel wheel-small"></i></span><span class="machine-label">YOUR MACHINE<br><b>YOUR SEASON</b></span></div></div></section>
+
+    <section class="resources-section section-wrap" id="guides" aria-labelledby="resourcesTitle">
+      <div class="section-heading resource-heading"><div><p class="eyebrow">KNOW YOUR EQUIPMENT</p><h2 id="resourcesTitle">A few helpful places to start.</h2></div><a href="#request" class="text-link">Need something else? <span>↗</span></a></div>
+      <div class="resource-layout"><div class="manual-feature"><span class="manual-badge">A / 01</span><div><p class="eyebrow">OWNER RESOURCES</p><h3>Manuals that make the details easier.</h3><p>Have your model name ready to find the right operator guide, maintenance information, and safety instructions.</p><a href="#request" class="light-link">Ask for a manual <span>→</span></a></div><div class="manual-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div></div>
+        <div class="faq-list" aria-label="Frequently asked questions">
+          <details class="faq-item"><summary>Where can I find my model and serial number?<span></span></summary><p>Look for the identification plate on the machine frame. Its location varies by model; your operator manual can point you to the exact spot.</p></details>
+          <details class="faq-item"><summary>How do I find the right replacement filter?<span></span></summary><p>Use the model and serial information when contacting an authorized parts dealer. This helps match the correct filter to your equipment.</p></details>
+          <details class="faq-item"><summary>What should I include in a service request?<span></span></summary><p>Share your model, serial number, a short description of the issue, and the best way to reach you. Never operate equipment that feels unsafe.</p></details>
+          <details class="faq-item"><summary>How do I check the status of my request?<span></span></summary><p>Use the request number and the same email address you submitted with the request in the tracker below.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="request-band" id="request" aria-labelledby="requestTitle"><div class="request-inner section-wrap"><div class="request-copy"><p class="eyebrow">WE’RE READY TO LISTEN</p><h2 id="requestTitle">Let’s get you back to what matters.</h2><p>Share a few details and the support team will help you find the right next step.</p><div class="request-note" id="backendMode" role="status" aria-live="polite"><span>i</span> Checking support system connection…</div></div>
+      <form class="request-form" id="requestForm"><div class="form-row"><label for="requestName">Your name</label><input id="requestName" name="name" type="text" placeholder="e.g. Alex Morgan" autocomplete="name" maxlength="100" required></div><div class="form-row"><label for="requestEmail">Email address</label><input id="requestEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" maxlength="254" required></div><div class="form-row"><label for="requestTopic">What do you need help with?</label><select id="requestTopic" name="topic" required><option value="" selected disabled>Choose a topic</option><option>Parts & filters</option><option>Service & maintenance</option><option>Manuals & guides</option><option>Warranty & coverage</option><option>Machine troubleshooting</option><option>Other question</option></select></div><div class="form-row"><label for="requestModel">Model or serial number <span>(optional)</span></label><input id="requestModel" name="model" type="text" placeholder="Add your machine details" maxlength="100"></div><div class="form-row form-row-wide"><label for="requestMessage">How can we help?</label><textarea id="requestMessage" name="message" rows="3" placeholder="Tell us a little about what you need..." maxlength="5000" required></textarea></div><button class="submit-button" type="submit">Create support request <span>→</span></button><p class="form-feedback" id="formFeedback" aria-live="polite"></p></form>
+    </div></section>
+
+    <section class="track-section section-wrap" id="track" aria-labelledby="trackTitle"><div class="track-copy"><p class="eyebrow">ALREADY REACHED OUT?</p><h2 id="trackTitle">Check your request.</h2><p>Enter your request number and the email address used when submitting it.</p></div><form class="track-form" id="trackForm"><label class="sr-only" for="ticketNumber">Support request number</label><input id="ticketNumber" name="ticketNumber" type="text" placeholder="Request number, e.g. AT-123456" autocomplete="off" required><label class="sr-only" for="ticketEmail">Requester email address</label><input id="ticketEmail" name="email" type="email" placeholder="Email used for the request" autocomplete="email" maxlength="254" required><button type="submit">Look it up <span>→</span></button><p class="track-feedback" id="trackFeedback" aria-live="polite"></p></form></section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner section-wrap"><a class="brand brand-footer" href="#home" aria-label="AgriTrac Support home"><span class="brand-mark">A<i></i></span><span class="brand-name">Agri<span>Trac</span><small>OWNER SUPPORT</small></span></a><p>Made for the people who keep things growing.</p><a href="#home" class="back-top">Back to top ↑</a></div><div class="footer-bottom section-wrap"><span>AGRITRAC SUPPORT EXPERIENCE</span><span>TRACTOR PHOTO VIA PEXELS · <a href="https://www.pexels.com/photo/green-tractor-on-plowed-field-under-cloudy-sky-30248663/" target="_blank" rel="noreferrer">VIEW SOURCE</a></span></div></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

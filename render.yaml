@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: agritrac-support
+    runtime: node
+    plan: free
+    rootDir: AgriTrac
+    buildCommand: npm test
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.21.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: ALLOWED_ORIGINS
+        value: https://agritrac-support.onrender.com
+      - key: FRESHSERVICE_DOMAIN
+        sync: false
+      - key: FRESHSERVICE_API_KEY
+        sync: false
+      - key: FRESHSERVICE_GROUP_ID
+        value: ""
