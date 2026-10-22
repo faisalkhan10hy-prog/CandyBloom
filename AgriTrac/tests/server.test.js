@@ -122,6 +122,10 @@ test('serves the AgriTrac page and its assets on the branded path', async () => 
   const image = await fetch(`${baseUrl}/assets/tractor-field.jpg`);
   assert.equal(image.status, 200);
   assert.match(image.headers.get('content-type'), /image\/jpeg/);
+
+  const favicon = await fetch(`${baseUrl}/favicon.svg`);
+  assert.equal(favicon.status, 200);
+  assert.match(favicon.headers.get('content-type'), /image\/svg\+xml/);
 });
 
 test('creates and looks up Freshservice tickets without exposing credentials', async () => {

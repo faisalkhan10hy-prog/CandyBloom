@@ -24,6 +24,7 @@ const PUBLIC_FILES = new Map([
   ['/agritrac', 'index.html'],
   ['/agritrac/', 'index.html'],
   ['/agritrac/index.html', 'index.html'],
+  ['/favicon.svg', 'assets/agritrac-mark.svg'],
   ['/styles.css', 'styles.css'],
   ['/agritrac/styles.css', 'styles.css'],
   ['/app.js', 'app.js'],
@@ -35,6 +36,7 @@ const MIME_TYPES = new Map([
   ['.html', 'text/html; charset=utf-8'],
   ['.css', 'text/css; charset=utf-8'],
   ['.js', 'text/javascript; charset=utf-8'],
+  ['.svg', 'image/svg+xml'],
   ['.jpg', 'image/jpeg']
 ]);
 const rateLimits = new Map();
