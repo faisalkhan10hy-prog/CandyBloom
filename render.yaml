@@ -20,3 +20,5 @@ services:
         sync: false
       - key: FRESHSERVICE_GROUP_ID
         value: ""
+      - key: SURVEY_ADMIN_TOKEN
+        sync: false

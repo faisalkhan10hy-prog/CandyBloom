@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { DatabaseSync } from 'node:sqlite';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { after, before, test } from 'node:test';
 
-const envNames = ['FRESHSERVICE_DOMAIN', 'FRESHSERVICE_API_KEY', 'FRESHSERVICE_GROUP_ID', 'ALLOWED_ORIGINS', 'AGRITRAC_DATA_DIR'];
+const envNames = ['FRESHSERVICE_DOMAIN', 'FRESHSERVICE_API_KEY', 'FRESHSERVICE_GROUP_ID', 'SURVEY_ADMIN_TOKEN', 'ALLOWED_ORIGINS', 'AGRITRAC_DATA_DIR'];
 const previousEnv = Object.fromEntries(envNames.map((name) => [name, process.env[name]]));
 let dataDirectory;
 let server;
@@ -15,6 +16,7 @@ before(async () => {
   process.env.FRESHSERVICE_DOMAIN = '';
   process.env.FRESHSERVICE_API_KEY = '';
   process.env.FRESHSERVICE_GROUP_ID = '';
+  process.env.SURVEY_ADMIN_TOKEN = 'test-survey-admin-secret';
   process.env.AGRITRAC_DATA_DIR = dataDirectory;
   process.env.ALLOWED_ORIGINS = 'http://localhost:3000';
   const { createServer } = await import('../server.js');
@@ -126,6 +128,92 @@ test('serves the AgriTrac page and its assets on the branded path', async () => 
   const favicon = await fetch(`${baseUrl}/favicon.svg`);
   assert.equal(favicon.status, 200);
   assert.match(favicon.headers.get('content-type'), /image\/svg\+xml/);
+
+  const widget = await fetch(`${baseUrl}/chat-widget.js`);
+  assert.equal(widget.status, 200);
+  assert.match(await widget.text(), /api\/surveys/);
+
+  const dashboard = await fetch(`${baseUrl}/admin/surveys`);
+  assert.equal(dashboard.status, 200);
+  assert.match(await dashboard.text(), /Conversation survey analytics/);
+});
+
+test('stores validated survey feedback and protects aggregate analytics', async () => {
+  const invalidResponse = await fetch(`${baseUrl}/api/surveys`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      conversationId: 'conversation-invalid',
+      userId: 'user-1',
+      agentId: 'agent-1',
+      comment: 'Rating is required.'
+    })
+  });
+  assert.equal(invalidResponse.status, 400);
+  assert.match((await invalidResponse.json()).error, /rating/i);
+
+  const feedback = [
+    { conversationId: 'conversation-1', userId: 'user-1', agentId: 'agent-1', rating: 5, comment: 'Very helpful.' },
+    { conversationId: 'conversation-2', userId: 'user-2', agentId: 'agent-2', rating: 2 },
+    { conversationId: 'conversation-3', userId: 'user-3', agentId: 'agent-1', rating: 3 }
+  ];
+  for (const survey of feedback) {
+    const response = await fetch(`${baseUrl}/api/surveys`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(survey)
+    });
+    assert.equal(response.status, 201);
+    const saved = await response.json();
+    assert.equal(saved.conversationId, survey.conversationId);
+    assert.ok(Number.isFinite(Date.parse(saved.submittedAt)));
+  }
+
+  const duplicateResponse = await fetch(`${baseUrl}/api/surveys`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(feedback[0])
+  });
+  assert.equal(duplicateResponse.status, 409);
+
+  const unauthorizedResponse = await fetch(`${baseUrl}/api/surveys/analytics`);
+  assert.equal(unauthorizedResponse.status, 401);
+
+  const analyticsResponse = await fetch(`${baseUrl}/api/surveys/analytics`, {
+    headers: { Authorization: 'Bearer test-survey-admin-secret' }
+  });
+  assert.equal(analyticsResponse.status, 200);
+  assert.deepEqual(await analyticsResponse.json(), {
+    totalResponses: 3,
+    averageRating: 3.33,
+    positiveRatings: 1,
+    negativeRatings: 1,
+    neutralRatings: 1,
+    agents: [
+      { agentId: 'agent-1', totalResponses: 2, averageRating: 4, csatScore: 50 },
+      { agentId: 'agent-2', totalResponses: 1, averageRating: 2, csatScore: 0 }
+    ]
+  });
+
+  const database = new DatabaseSync(path.join(dataDirectory, 'surveys.sqlite'));
+  try {
+    const savedSurvey = database.prepare(`
+      SELECT conversation_id, user_id, agent_id, rating, comment, submitted_at
+      FROM conversation_surveys
+      WHERE conversation_id = ?
+    `).get('conversation-1');
+    assert.equal(savedSurvey.conversation_id, 'conversation-1');
+    assert.equal(savedSurvey.user_id, 'user-1');
+    assert.equal(savedSurvey.agent_id, 'agent-1');
+    assert.equal(savedSurvey.rating, 5);
+    assert.equal(savedSurvey.comment, 'Very helpful.');
+    assert.ok(Number.isFinite(Date.parse(savedSurvey.submitted_at)));
+    assert.equal(database.prepare(`
+      SELECT comment FROM conversation_surveys WHERE conversation_id = ?
+    `).get('conversation-3').comment, '');
+  } finally {
+    database.close();
+  }
 });
 
 test('creates and looks up Freshservice tickets without exposing credentials', async () => {

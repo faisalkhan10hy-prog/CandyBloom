@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5ef">
+  <title>Conversation survey analytics | AgriTrac</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/admin.js" defer></script>
+</head>
+<body class="survey-admin-body">
+  <header class="survey-admin-header">
+    <a class="brand" href="/agritrac" aria-label="AgriTrac Support home"><span class="brand-mark" aria-hidden="true">A<i></i></span><span class="brand-name">Agri<span>Trac</span><small>SUPPORT ANALYTICS</small></span></a>
+    <a class="admin-back-link" href="/agritrac">← Support portal</a>
+  </header>
+  <main class="survey-admin">
+    <div class="survey-admin-heading">
+      <p class="eyebrow">CUSTOMER EXPERIENCE</p>
+      <h1>Conversation survey analytics</h1>
+      <p>Track customer satisfaction and compare agent ratings.</p>
+    </div>
+    <form class="admin-access-form" id="adminAccessForm">
+      <label for="adminToken">Analytics access token</label>
+      <div><input id="adminToken" type="password" autocomplete="current-password" required placeholder="Enter your admin token"><button type="submit">Load analytics</button></div>
+      <p id="adminFeedback" role="status" aria-live="polite"></p>
+    </form>
+    <section class="analytics-content" id="analyticsContent" hidden aria-live="polite">
+      <div class="analytics-cards">
+        <article class="analytics-card"><span>Average rating</span><strong id="averageRating">—</strong><small>out of 5 stars</small></article>
+        <article class="analytics-card"><span>Total responses</span><strong id="totalResponses">—</strong><small>submitted surveys</small></article>
+        <article class="analytics-card"><span>Positive ratings</span><strong id="positiveRatings">—</strong><small>4 or 5 stars</small></article>
+        <article class="analytics-card"><span>Negative ratings</span><strong id="negativeRatings">—</strong><small>1 or 2 stars</small></article>
+        <article class="analytics-card"><span>Neutral ratings</span><strong id="neutralRatings">—</strong><small>3 stars</small></article>
+      </div>
+      <section class="agent-analytics" aria-labelledby="agentAnalyticsTitle">
+        <div class="agent-analytics-heading"><div><p class="eyebrow">TEAM PERFORMANCE</p><h2 id="agentAnalyticsTitle">Agent-wise CSAT</h2></div><button id="refreshAnalytics" type="button">Refresh</button></div>
+        <div class="agent-table-wrap">
+          <table>
+            <thead><tr><th scope="col">Agent</th><th scope="col">Responses</th><th scope="col">Average rating</th><th scope="col">CSAT</th></tr></thead>
+            <tbody id="agentRows"><tr><td colspan="4">No survey responses yet.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+      <p class="analytics-definition">CSAT is the percentage of 4- and 5-star ratings. Neutral responses are shown separately.</p>
+    </section>
+  </main>
+</body>
+</html>

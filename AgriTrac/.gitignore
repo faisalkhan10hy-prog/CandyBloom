@@ -2,4 +2,6 @@
 .env.*.local
 data/*.json
 data/*.tmp
+data/*.sqlite
+data/*.sqlite-*
 node_modules/

@@ -1,5 +1,7 @@
-import { randomInt } from 'node:crypto';
+import { randomInt, timingSafeEqual } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { DatabaseSync } from 'node:sqlite';
 import { createServer as createHttpServer } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,6 +31,11 @@ const PUBLIC_FILES = new Map([
   ['/agritrac/styles.css', 'styles.css'],
   ['/app.js', 'app.js'],
   ['/agritrac/app.js', 'app.js'],
+  ['/chat-widget.js', 'chat-widget.js'],
+  ['/admin/surveys', 'admin.html'],
+  ['/admin/surveys/', 'admin.html'],
+  ['/admin/surveys.html', 'admin.html'],
+  ['/admin.js', 'admin.js'],
   ['/assets/tractor-field.jpg', 'assets/tractor-field.jpg'],
   ['/agritrac/assets/tractor-field.jpg', 'assets/tractor-field.jpg']
 ]);
@@ -153,6 +160,72 @@ function validateTicket(body) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(400, 'Enter a valid email address.');
   if (!VALID_TOPICS.has(topic)) throw new HttpError(400, 'Choose a valid support topic.');
   return { name, email, topic, model, message };
+}
+
+function validateSurvey(body) {
+  const conversationId = readText(body.conversationId, 'Conversation ID', 100);
+  const userId = readText(body.userId, 'User ID', 100);
+  const agentId = readText(body.agentId, 'Agent ID', 100);
+  const comment = readText(body.comment, 'Comment', 2000, { required: false });
+  if (![conversationId, userId, agentId].every((id) => /^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(id))) {
+    throw new HttpError(400, 'Conversation, user, and agent IDs may only contain letters, numbers, dots, underscores, colons, or hyphens.');
+  }
+  if (!Number.isInteger(body.rating) || body.rating < 1 || body.rating > 5) {
+    throw new HttpError(400, 'Choose a rating from 1 to 5.');
+  }
+  return { conversationId, userId, agentId, rating: body.rating, comment };
+}
+
+function createSurveyDatabase() {
+  mkdirSync(DATA_DIRECTORY, { recursive: true });
+  const database = new DatabaseSync(path.join(DATA_DIRECTORY, 'surveys.sqlite'));
+  database.exec(readFileSync(path.join(ROOT, 'surveys.sql'), 'utf8'));
+  return database;
+}
+
+function submitSurvey(database, body) {
+  const survey = validateSurvey(body);
+  const submittedAt = new Date().toISOString();
+  const result = database.prepare(`
+    INSERT INTO conversation_surveys (conversation_id, user_id, agent_id, rating, comment, submitted_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(conversation_id) DO NOTHING
+  `).run(survey.conversationId, survey.userId, survey.agentId, survey.rating, survey.comment, submittedAt);
+  if (result.changes === 0) throw new HttpError(409, 'Feedback has already been submitted for this conversation.');
+  return { conversationId: survey.conversationId, submittedAt };
+}
+
+function getSurveyAnalytics(database) {
+  const totals = database.prepare(`
+    SELECT
+      COUNT(*) AS totalResponses,
+      COALESCE(ROUND(AVG(rating), 2), 0) AS averageRating,
+      COALESCE(SUM(CASE WHEN rating >= 4 THEN 1 ELSE 0 END), 0) AS positiveRatings,
+      COALESCE(SUM(CASE WHEN rating <= 2 THEN 1 ELSE 0 END), 0) AS negativeRatings,
+      COALESCE(SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END), 0) AS neutralRatings
+    FROM conversation_surveys
+  `).get();
+  const agents = database.prepare(`
+    SELECT
+      agent_id AS agentId,
+      COUNT(*) AS totalResponses,
+      ROUND(AVG(rating), 2) AS averageRating,
+      ROUND(100.0 * SUM(CASE WHEN rating >= 4 THEN 1 ELSE 0 END) / COUNT(*), 1) AS csatScore
+    FROM conversation_surveys
+    GROUP BY agent_id
+    ORDER BY averageRating DESC, totalResponses DESC, agent_id ASC
+  `).all();
+  return { ...totals, agents };
+}
+
+function hasSurveyAdminAccess(request) {
+  const expected = process.env.SURVEY_ADMIN_TOKEN ?? '';
+  const authorization = request.headers.authorization ?? '';
+  const supplied = /^Bearer\s+(.+)$/i.exec(authorization)?.[1] ?? '';
+  if (!expected || !supplied) return false;
+  const expectedBytes = Buffer.from(expected);
+  const suppliedBytes = Buffer.from(supplied);
+  return expectedBytes.length === suppliedBytes.length && timingSafeEqual(expectedBytes, suppliedBytes);
 }
 
 function escapeHtml(value) {
@@ -365,7 +438,8 @@ function setSecurityHeaders(response) {
 }
 
 export function createServer() {
-  return createHttpServer(async (request, response) => {
+  const surveyDatabase = createSurveyDatabase();
+  const server = createHttpServer(async (request, response) => {
     setSecurityHeaders(response);
     const origin = request.headers.origin;
     if (origin) {
@@ -376,7 +450,7 @@ export function createServer() {
       response.setHeader('Access-Control-Allow-Origin', origin);
       response.setHeader('Vary', 'Origin');
       response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      response.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
     }
     if (request.method === 'OPTIONS') {
       response.writeHead(204);
@@ -403,11 +477,25 @@ export function createServer() {
         return;
       }
 
+      if (pathname === '/api/surveys/analytics') {
+        if (request.method !== 'GET') throw new HttpError(405, 'Method not allowed.');
+        if (!process.env.SURVEY_ADMIN_TOKEN?.trim()) {
+          throw new HttpError(503, 'Survey analytics access is not configured.');
+        }
+        if (!hasSurveyAdminAccess(request)) throw new HttpError(401, 'A valid analytics access token is required.');
+        sendJson(response, 200, getSurveyAnalytics(surveyDatabase));
+        return;
+      }
+
       if (pathname.startsWith('/api/')) {
-        if (settings.error) throw new HttpError(503, settings.error);
         if (request.method !== 'POST') throw new HttpError(405, 'Method not allowed.');
         checkRateLimit(request);
         const body = await readJson(request);
+        if (pathname === '/api/surveys') {
+          sendJson(response, 201, submitSurvey(surveyDatabase, body));
+          return;
+        }
+        if (settings.error) throw new HttpError(503, settings.error);
         if (pathname === '/api/tickets') {
           sendJson(response, 201, await createTicket(body, settings));
           return;
@@ -437,6 +525,8 @@ export function createServer() {
       });
     }
   });
+  server.once('close', () => surveyDatabase.close());
+  return server;
 }
 
 const isMainModule = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);

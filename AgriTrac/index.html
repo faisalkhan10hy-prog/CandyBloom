@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
+  <script src="/chat-widget.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -76,5 +77,60 @@
 
   <footer class="site-footer"><div class="footer-inner section-wrap"><a class="brand brand-footer" href="#home" aria-label="AgriTrac Support home"><span class="brand-mark">A<i></i></span><span class="brand-name">Agri<span>Trac</span><small>OWNER SUPPORT</small></span></a><p>Made for the people who keep things growing.</p><a href="#home" class="back-top">Back to top ↑</a></div><div class="footer-bottom section-wrap"><span>AGRITRAC SUPPORT EXPERIENCE</span><span>TRACTOR PHOTO VIA PEXELS · <a href="https://www.pexels.com/photo/green-tractor-on-plowed-field-under-cloudy-sky-30248663/" target="_blank" rel="noreferrer">VIEW SOURCE</a></span></div></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="chat-widget">
+    <section class="chat-panel" id="chatPanel" aria-label="AgriTrac support chat" hidden>
+      <header class="chat-header">
+        <div><span class="chat-agent-mark" aria-hidden="true">A</span><span><strong>AgriTrac Support</strong><small><i></i> Support team</small></span></div>
+        <button class="chat-close" id="chatClose" type="button" aria-label="Close chat">×</button>
+      </header>
+      <div class="chat-screen chat-welcome" id="chatWelcome">
+        <span class="chat-welcome-icon" aria-hidden="true">✳</span>
+        <p class="eyebrow">WE’RE HERE TO HELP</p>
+        <h2>Let’s get you back to work.</h2>
+        <p>Start a conversation with AgriTrac support.</p>
+        <p class="chat-demo-note">Preview chat: messages stay in this browser and are not sent to a live agent.</p>
+        <button class="chat-primary" id="startChat" type="button">Start conversation <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="chat-screen chat-conversation" id="chatConversation" hidden>
+        <p class="chat-preview-banner">Demo conversation · No live agent is connected</p>
+        <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+        <form class="chat-compose" id="chatCompose">
+          <label class="sr-only" for="chatMessage">Write a message</label>
+          <input id="chatMessage" name="message" maxlength="500" placeholder="Write a message..." autocomplete="off" required>
+          <button type="submit" aria-label="Send message">↑</button>
+        </form>
+        <div class="chat-agent-controls"><span>Demo agent controls</span><button id="endChat" type="button">End chat</button></div>
+      </div>
+      <div class="chat-screen chat-survey" id="chatSurvey" hidden>
+        <span class="chat-survey-icon" aria-hidden="true">✳</span>
+        <p class="eyebrow">CONVERSATION ENDED</p>
+        <h2>How would you rate your conversation?</h2>
+        <p class="chat-survey-intro">Your feedback helps us improve support for every season.</p>
+        <form id="surveyForm">
+          <fieldset class="survey-rating">
+            <legend class="sr-only">Choose a rating from 1 to 5 stars</legend>
+            <div class="survey-stars">
+              <input id="rating1" name="rating" type="radio" value="1" required><label for="rating1" aria-label="1 star">★</label>
+              <input id="rating2" name="rating" type="radio" value="2"><label for="rating2" aria-label="2 stars">★</label>
+              <input id="rating3" name="rating" type="radio" value="3"><label for="rating3" aria-label="3 stars">★</label>
+              <input id="rating4" name="rating" type="radio" value="4"><label for="rating4" aria-label="4 stars">★</label>
+              <input id="rating5" name="rating" type="radio" value="5"><label for="rating5" aria-label="5 stars">★</label>
+            </div>
+          </fieldset>
+          <label class="survey-comment-label" for="surveyComment">Anything else you’d like us to know? <span>Optional</span></label>
+          <textarea id="surveyComment" name="comment" rows="3" maxlength="2000" placeholder="Share a little more about your experience..."></textarea>
+          <p class="survey-feedback" id="surveyFeedback" role="status" aria-live="polite"></p>
+          <button class="chat-primary" id="submitSurvey" type="submit">Submit feedback <span aria-hidden="true">→</span></button>
+        </form>
+      </div>
+      <div class="chat-screen chat-thankyou" id="chatThankyou" hidden>
+        <span class="chat-thankyou-icon" aria-hidden="true">✓</span>
+        <h2>Thank you for your feedback!</h2>
+        <p>Your response has been recorded.</p>
+        <button class="chat-secondary" id="startAnotherChat" type="button">Start another conversation</button>
+      </div>
+    </section>
+    <button class="chat-launcher" id="chatLauncher" type="button" aria-expanded="false" aria-controls="chatPanel"><span aria-hidden="true">✳</span> Chat with us</button>
+  </div>
 </body>
 </html>
